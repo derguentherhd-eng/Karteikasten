@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Karteikasten – Lernen</title>
+<meta name="description" content="Digitaler Karteikasten zum Lernen mit Karteikarten." />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗃️</text></svg>" />
+</head>
+<body>
+
+<header class="kopfzeile">
+  <div class="marke">
+    <span class="marke__symbol">🗃️</span>
+    <span class="marke__titel">Karteikasten</span>
+    <span class="marke__untertitel">Lernen</span>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="nav__link nav__link--aktiv">Lernen</a>
+    <a href="stapel.html" class="nav__link">Stapelübersicht</a>
+    <button id="btn-export" class="icon-btn" title="Fortschritt als JSON-Datei sichern">
+      ⬇ Sichern
+    </button>
+  </nav>
+</header>
+
+<main>
+
+  <div class="stapelleiste" id="stapelleiste" role="tablist" aria-label="Stapel auswählen"></div>
+
+  <section class="lernbereich">
+
+    <div class="fortschrittszeile" id="fortschrittszeile" hidden>
+      <span id="fortschritt-text">0 / 0</span>
+      <div class="fortschrittsbalken">
+        <div class="fortschrittsbalken__fuellung" id="fortschrittsbalken-fuellung" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <div class="karten-buehne" id="karten-buehne">
+      <div class="karte karte--leer" id="karte" tabindex="0" role="button" aria-label="Karteikarte umdrehen">
+        <div class="karte__seite karte__seite--vorder" id="karte-vorderseite">
+          <div class="karte__text">Lade Karteikarten …</div>
+        </div>
+        <div class="karte__seite karte__seite--rueck" id="karte-rueckseite">
+          <div class="karte__text"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="antwort-buttons" id="antwort-buttons">
+      <button class="antwort-btn antwort-btn--falsch" id="btn-falsch">
+        ✕ Falsch beantwortet <span class="antwort-btn__taste">F</span>
+      </button>
+      <button class="antwort-btn antwort-btn--richtig" id="btn-richtig">
+        ✓ Richtig beantwortet <span class="antwort-btn__taste">R</span>
+      </button>
+    </div>
+
+    <p class="tasten-hinweis">
+      <span><kbd>Leertaste</kbd> Karte umdrehen</span>
+      <span><kbd>F</kbd> Falsch</span>
+      <span><kbd>R</kbd> Richtig</span>
+    </p>
+
+  </section>
+
+</main>
+
+<footer>Dein Fortschritt wird automatisch in diesem Browser gespeichert.</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

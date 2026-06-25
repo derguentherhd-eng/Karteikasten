@@ -1,0 +1,948 @@
+/* ============================================================================
+   Karteikasten – Globales Stylesheet
+   Designkonzept: Ein digitaler Karteikasten, der sich wie ein echter
+   Holz-Karteikasten auf einem Schreibtisch bei Abendlicht anfühlt.
+   Cremefarbene Karteikarten, dunkles Tannengrün, Senfgelb als Aktiv-Akzent.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Farbpalette */
+  --bg-deep: #1c2127;
+  --bg-deep-2: #232a32;
+  --holz: #2e2419;
+  --holz-hell: #3c3024;
+  --karte-creme: #f7f1e3;
+  --karte-creme-rand: #ebe2c9;
+  --tinte: #2a2620;
+  --tinte-soft: #5c5648;
+  --tanne: #1b3a2f;
+  --tanne-hell: #25503f;
+  --senf: #e8a33d;
+  --senf-hell: #f3c177;
+  --gruen: #4f8f6b;
+  --gruen-hell: #6cab85;
+  --rot: #c44d3e;
+  --rot-hell: #d97464;
+  --linie: rgba(247, 241, 227, 0.12);
+
+  --schrift-anzeige: "Fraunces", "Georgia", serif;
+  --schrift-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --radius-karte: 18px;
+  --radius-ui: 10px;
+  --schatten-karte: 0 18px 40px -12px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --schatten-ui: 0 4px 14px rgba(0, 0, 0, 0.25);
+
+  --transition-flip: 0.55s cubic-bezier(0.45, 0.05, 0.15, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--schrift-ui);
+  color: var(--karte-creme);
+  background: radial-gradient(ellipse at top, var(--bg-deep-2) 0%, var(--bg-deep) 60%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Dezente Holzmaserungs-Textur als Hintergrund-Ambiente */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.012) 0px,
+      rgba(255, 255, 255, 0.012) 1px,
+      transparent 1px,
+      transparent 70px
+    );
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--schrift-ui);
+  cursor: pointer;
+  border: none;
+}
+
+/* ============================== Kopfzeile ================================ */
+
+.kopfzeile {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px clamp(20px, 4vw, 56px);
+  border-bottom: 1px solid var(--linie);
+  flex-wrap: wrap;
+}
+
+.marke {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.marke__symbol {
+  font-family: var(--schrift-anzeige);
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--senf);
+}
+
+.marke__titel {
+  font-family: var(--schrift-anzeige);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.marke__untertitel {
+  font-size: 0.78rem;
+  color: rgba(247, 241, 227, 0.55);
+  margin-left: 2px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav__link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--linie);
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.nav__link:hover {
+  background: rgba(247, 241, 227, 0.06);
+  border-color: rgba(247, 241, 227, 0.25);
+}
+
+.nav__link--aktiv {
+  background: var(--senf);
+  color: var(--holz);
+  border-color: var(--senf);
+}
+
+.nav__link--aktiv:hover {
+  background: var(--senf-hell);
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: rgba(247, 241, 227, 0.06);
+  border: 1px solid var(--linie);
+  color: var(--karte-creme);
+  transition: background 0.2s, transform 0.15s;
+}
+
+.icon-btn:hover {
+  background: rgba(247, 241, 227, 0.13);
+}
+
+.icon-btn:active {
+  transform: scale(0.97);
+}
+
+/* ============================== Haupt-Layout ============================== */
+
+main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 4vw, 48px);
+  gap: 28px;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================== Stapel-Leiste (Lernseite) ================= */
+
+.stapelleiste {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+
+.stapelleiste::-webkit-scrollbar {
+  height: 6px;
+}
+.stapelleiste::-webkit-scrollbar-thumb {
+  background: rgba(247, 241, 227, 0.18);
+  border-radius: 4px;
+}
+
+.stapel-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--bg-deep-2);
+  border: 1px solid var(--linie);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: rgba(247, 241, 227, 0.75);
+  transition: all 0.2s;
+  position: relative;
+}
+
+.stapel-chip:hover {
+  border-color: rgba(247, 241, 227, 0.35);
+  color: var(--karte-creme);
+}
+
+.stapel-chip--aktiv {
+  background: var(--tanne);
+  border-color: var(--tanne-hell);
+  color: var(--karte-creme);
+}
+
+.stapel-chip__zahl {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stapel-chip--aktiv .stapel-chip__zahl {
+  background: var(--senf);
+  color: var(--holz);
+}
+
+/* ============================== Lernbereich ================================ */
+
+.lernbereich {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  flex: 1;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.fortschrittszeile {
+  width: min(560px, 100%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.82rem;
+  color: rgba(247, 241, 227, 0.6);
+}
+
+.fortschrittsbalken {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(247, 241, 227, 0.1);
+  overflow: hidden;
+}
+
+.fortschrittsbalken__fuellung {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--senf), var(--senf-hell));
+  transition: width 0.4s ease;
+}
+
+/* ---- Karteikarte ---- */
+
+.karten-buehne {
+  position: relative;
+  width: min(560px, 100%);
+  height: clamp(320px, 48vh, 420px);
+  perspective: 1800px;
+}
+
+/* Stapel-Effekt: zwei dezent versetzte Schatten-Karten dahinter */
+.karten-buehne::before,
+.karten-buehne::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--karte-creme-rand);
+  border-radius: var(--radius-karte);
+  z-index: 0;
+}
+.karten-buehne::before {
+  transform: translate(8px, 10px) rotate(1.4deg);
+  opacity: 0.5;
+}
+.karten-buehne::after {
+  transform: translate(-7px, 14px) rotate(-1.1deg);
+  opacity: 0.35;
+}
+
+.karte {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform var(--transition-flip);
+}
+
+.karte--umgedreht {
+  transform: rotateY(180deg);
+}
+
+.karte--leer {
+  cursor: default;
+}
+
+.karte__seite {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: var(--radius-karte);
+  background: var(--karte-creme);
+  color: var(--tinte);
+  box-shadow: var(--schatten-karte);
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 4vw, 40px);
+  overflow: hidden;
+}
+
+.karte__seite--rueck {
+  transform: rotateY(180deg);
+  background: var(--karte-creme);
+}
+
+/* Lochrand-Andeutung oben, wie bei einer echten Karteikarte */
+.karte__seite::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 7px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 6px,
+    rgba(42, 38, 32, 0.15) 6px,
+    rgba(42, 38, 32, 0.15) 9px
+  );
+}
+
+.karte__kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gruen);
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+.karte__seite--rueck .karte__kicker {
+  color: var(--senf);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.78rem;
+}
+
+.karte__thema {
+  font-size: 0.74rem;
+  color: var(--tinte-soft);
+  margin-bottom: 4px;
+}
+
+.karte__text {
+  font-family: var(--schrift-anzeige);
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  line-height: 1.38;
+  font-weight: 500;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.karte__seite--rueck .karte__text {
+  font-size: clamp(1.02rem, 2vw, 1.25rem);
+  font-weight: 400;
+}
+
+.karte__text::-webkit-scrollbar {
+  width: 5px;
+}
+.karte__text::-webkit-scrollbar-thumb {
+  background: rgba(42, 38, 32, 0.18);
+  border-radius: 4px;
+}
+
+.karte__hinweis {
+  font-size: 0.74rem;
+  color: var(--tinte-soft);
+  text-align: center;
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+
+.karte--leer .karte__text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--tinte-soft);
+  font-family: var(--schrift-ui);
+  font-size: 1rem;
+}
+
+/* ---- Antwort-Buttons ---- */
+
+.antwort-buttons {
+  display: flex;
+  gap: 14px;
+  width: min(560px, 100%);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.antwort-buttons--sichtbar {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.antwort-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-radius: var(--radius-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: transform 0.15s, filter 0.15s;
+  box-shadow: var(--schatten-ui);
+}
+
+.antwort-btn:active {
+  transform: scale(0.97);
+}
+
+.antwort-btn--falsch {
+  background: var(--rot);
+  color: var(--karte-creme);
+}
+.antwort-btn--falsch:hover {
+  background: var(--rot-hell);
+}
+
+.antwort-btn--richtig {
+  background: var(--gruen);
+  color: var(--karte-creme);
+}
+.antwort-btn--richtig:hover {
+  background: var(--gruen-hell);
+}
+
+.antwort-btn__taste {
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.tasten-hinweis {
+  font-size: 0.78rem;
+  color: rgba(247, 241, 227, 0.45);
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tasten-hinweis kbd {
+  background: rgba(247, 241, 227, 0.1);
+  border: 1px solid var(--linie);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-family: var(--schrift-ui);
+  font-size: 0.78rem;
+}
+
+/* ============================== Stapel-Übersicht (Seite 2) ================ */
+
+.stapel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.stapel-karte {
+  position: relative;
+  background: var(--bg-deep-2);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-karte);
+  padding: 20px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.18s, border-color 0.18s, background 0.18s;
+  overflow: hidden;
+}
+
+.stapel-karte::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: var(--stapel-akzent, var(--senf));
+}
+
+.stapel-karte:hover {
+  transform: translateY(-3px);
+  border-color: rgba(247, 241, 227, 0.3);
+  background: #262d36;
+}
+
+.stapel-karte__kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.stapel-karte__titel {
+  font-family: var(--schrift-anzeige);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.stapel-karte__zahl {
+  font-family: var(--schrift-anzeige);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--stapel-akzent, var(--senf));
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.stapel-karte__beschreibung {
+  font-size: 0.8rem;
+  color: rgba(247, 241, 227, 0.5);
+  line-height: 1.4;
+}
+
+.stapel-karte__cta {
+  margin-top: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--stapel-akzent, var(--senf));
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stapel-karte--leer {
+  opacity: 0.45;
+  cursor: default;
+}
+.stapel-karte--leer:hover {
+  transform: none;
+  background: var(--bg-deep-2);
+  border-color: var(--linie);
+}
+
+/* Akzentfarben je Stapeltyp */
+.stapel-karte[data-typ="unbearbeitet"] { --stapel-akzent: #8aa6c2; }
+.stapel-karte[data-typ="falsch"] { --stapel-akzent: var(--rot-hell); }
+.stapel-karte[data-typ="richtig"] { --stapel-akzent: var(--gruen-hell); }
+
+/* ============================== Abschnitts-Titel =========================== */
+
+.abschnitt-titel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.abschnitt-titel h2 {
+  font-family: var(--schrift-anzeige);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.abschnitt-titel p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(247, 241, 227, 0.5);
+}
+
+/* ============================== Gesamtfortschritt (Übersicht) ============= */
+
+.gesamtuebersicht {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--bg-deep-2);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-karte);
+  padding: 22px 26px;
+  flex-wrap: wrap;
+}
+
+.ring-wrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  flex-shrink: 0;
+}
+
+.ring-wrap svg {
+  transform: rotate(-90deg);
+}
+
+.ring-wrap__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--schrift-anzeige);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.statistik-zeile {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.statistik-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statistik-item__zahl {
+  font-family: var(--schrift-anzeige);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.statistik-item__label {
+  font-size: 0.76rem;
+  color: rgba(247, 241, 227, 0.5);
+}
+
+/* ============================== Import-Bereich (Übersicht) ================ */
+
+.import-zone {
+  border: 1.5px dashed var(--linie);
+  border-radius: var(--radius-karte);
+  padding: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.import-zone--dragover {
+  border-color: var(--senf);
+  background: rgba(232, 163, 61, 0.06);
+}
+
+.import-zone__text h3 {
+  margin: 0 0 4px;
+  font-family: var(--schrift-anzeige);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.import-zone__text p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(247, 241, 227, 0.5);
+}
+
+.btn-primaer {
+  background: var(--senf);
+  color: var(--holz);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 12px 22px;
+  border-radius: var(--radius-ui);
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primaer:hover {
+  background: var(--senf-hell);
+}
+.btn-primaer:active {
+  transform: scale(0.97);
+}
+
+.btn-sekundaer {
+  background: transparent;
+  color: rgba(247, 241, 227, 0.7);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 12px 22px;
+  border-radius: var(--radius-ui);
+  border: 1.5px solid rgba(247, 241, 227, 0.25);
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-sekundaer:hover {
+  background: rgba(247, 241, 227, 0.07);
+  border-color: rgba(247, 241, 227, 0.45);
+}
+
+.btn-gefahr {
+  background: var(--rot);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 12px 22px;
+  border-radius: var(--radius-ui);
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-gefahr:hover {
+  background: var(--rot-hell);
+}
+.btn-gefahr:active {
+  transform: scale(0.97);
+}
+
+.loeschen-sektion {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(247, 241, 227, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.loeschen-bestaetigung {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.loeschen-frage {
+  font-size: 0.95rem;
+  color: rgba(247, 241, 227, 0.85);
+  margin: 0;
+}
+
+.loeschen-aktionen {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ============================== Leerer Zustand ============================= */
+
+.leer-zustand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(247, 241, 227, 0.55);
+}
+
+.leer-zustand__symbol {
+  font-size: 2.4rem;
+  margin-bottom: 4px;
+}
+
+.leer-zustand h3 {
+  font-family: var(--schrift-anzeige);
+  color: var(--karte-creme);
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.leer-zustand p {
+  margin: 0;
+  max-width: 380px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* ============================== Toast-Benachrichtigung ===================== */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--tanne);
+  border: 1px solid var(--tanne-hell);
+  color: var(--karte-creme);
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: var(--schatten-ui);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.toast--sichtbar {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast--fehler {
+  background: var(--rot);
+  border-color: var(--rot-hell);
+}
+
+/* ============================== Footer ===================================== */
+
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 18px;
+  font-size: 0.76rem;
+  color: rgba(247, 241, 227, 0.35);
+}
+
+/* ============================== Responsive Anpassungen ===================== */
+
+@media (max-width: 720px) {
+  .kopfzeile {
+    padding: 16px 18px;
+  }
+  .marke__untertitel {
+    display: none;
+  }
+  main {
+    padding: 16px;
+    gap: 20px;
+  }
+  .karten-buehne {
+    height: clamp(300px, 52vh, 380px);
+  }
+  .karte__seite {
+    padding: 22px 20px;
+  }
+  .antwort-buttons {
+    gap: 10px;
+  }
+  .antwort-btn {
+    padding: 14px 12px;
+    font-size: 0.92rem;
+  }
+  .gesamtuebersicht {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .statistik-zeile {
+    justify-content: center;
+  }
+  .import-zone {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .nav__link, .icon-btn {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+  }
+  .tasten-hinweis {
+    display: none;
+  }
+}
+
+/* Reduzierte Bewegung respektieren */
+@media (prefers-reduced-motion: reduce) {
+  .karte, .fortschrittsbalken__fuellung, .antwort-buttons, .toast, .stapel-karte {
+    transition: none !important;
+  }
+}
+
+/* Sichtbarer Fokus-Zustand für Tastaturnutzung */
+a:focus-visible,
+button:focus-visible,
+.karte:focus-visible,
+.stapel-karte:focus-visible,
+.stapel-chip:focus-visible {
+  outline: 2px solid var(--senf);
+  outline-offset: 2px;
+}

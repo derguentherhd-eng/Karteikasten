@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Karteikasten – Stapelübersicht</title>
+<meta name="description" content="Übersicht aller Karteikarten-Stapel nach Lernfortschritt." />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗃️</text></svg>" />
+</head>
+<body>
+
+<header class="kopfzeile">
+  <div class="marke">
+    <span class="marke__symbol">🗃️</span>
+    <span class="marke__titel">Karteikasten</span>
+    <span class="marke__untertitel">Stapelübersicht</span>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="nav__link">Lernen</a>
+    <a href="stapel.html" class="nav__link nav__link--aktiv">Stapelübersicht</a>
+    <button id="btn-export" class="icon-btn" title="Fortschritt als JSON-Datei sichern">⬇ Sichern</button>
+    <button id="btn-import-trigger" class="icon-btn" title="Fortschritt aus JSON-Datei laden">⬆ Laden</button>
+    <input type="file" id="input-import-zustand" accept="application/json" hidden />
+  </nav>
+</header>
+
+<main>
+
+  <section class="gesamtuebersicht" id="gesamtuebersicht" aria-label="Gesamtfortschritt">
+    <div class="ring-wrap">
+      <svg width="92" height="92" viewBox="0 0 92 92">
+        <circle cx="46" cy="46" r="40" fill="none" stroke="rgba(247,241,227,0.12)" stroke-width="9" />
+        <circle id="ring-fuellung" cx="46" cy="46" r="40" fill="none" stroke="#e8a33d" stroke-width="9"
+          stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+      </svg>
+      <div class="ring-wrap__label" id="ring-label">0%</div>
+    </div>
+    <div class="statistik-zeile" id="statistik-zeile">
+      <div class="statistik-item">
+        <span class="statistik-item__zahl" id="stat-gesamt">0</span>
+        <span class="statistik-item__label">Karten gesamt</span>
+      </div>
+      <div class="statistik-item">
+        <span class="statistik-item__zahl" id="stat-gemeistert">0</span>
+        <span class="statistik-item__label">3× richtig gemeistert</span>
+      </div>
+      <div class="statistik-item">
+        <span class="statistik-item__zahl" id="stat-offen">0</span>
+        <span class="statistik-item__label">Noch unbearbeitet</span>
+      </div>
+      <div class="statistik-item">
+        <span class="statistik-item__zahl" id="stat-schwierig">0</span>
+        <span class="statistik-item__label">3× falsch (Sorgenkinder)</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Neue Karteikarten importieren">
+    <div class="import-zone" id="import-zone">
+      <div class="import-zone__text">
+        <h3>Neue Karteikarten hinzufügen</h3>
+        <p>Lege passend formatierte CSV-Dateien (Themencluster, Frage, Antwort) in den Ordner <strong>karteikarten-csvs/</strong> oder wähle sie hier direkt aus. Neue Karten landen im Stapel „Unbearbeitete Karteikarten“.</p>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn-primaer" id="btn-csv-waehlen">CSV-Datei(en) auswählen</button>
+        <input type="file" id="input-csv" accept=".csv,text/csv" multiple hidden />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="abschnitt-titel">
+      <h2>Deine Stapel</h2>
+      <p>Klicke auf einen Stapel, um genau diese Karten erneut zu lernen.</p>
+    </div>
+    <div class="stapel-grid" id="stapel-grid"></div>
+  </section>
+
+  <section aria-label="Karteikasten zurücksetzen" class="loeschen-sektion">
+    <button id="btn-alle-loeschen" class="btn-gefahr">Alle Karteikarten löschen</button>
+    <div id="loeschen-bestaetigung" class="loeschen-bestaetigung" hidden>
+      <p class="loeschen-frage">Willst du wirklich alle Karteikarten unwiderruflich löschen?</p>
+      <div class="loeschen-aktionen">
+        <button id="btn-loeschen-ja" class="btn-gefahr">Ja, alle unwiderruflich löschen</button>
+        <button id="btn-loeschen-nein" class="btn-sekundaer">Abbrechen</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Dein Fortschritt wird automatisch in diesem Browser gespeichert.</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/stapel.js"></script>
+</body>
+</html>
